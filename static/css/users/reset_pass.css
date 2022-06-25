@@ -1,5 +1,6 @@
 .content{
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     font-family: sans-serif;
@@ -8,5 +9,10 @@
     background: linear-gradient(to right bottom, rgb(167, 91, 145), rgb(100, 199, 194));
 }
 form{
+    font-size: 15px;
+}
+.form-text ul{
+    color:  white;
+    list-style: none;
     font-size: 15px;
 }

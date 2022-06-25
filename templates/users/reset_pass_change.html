@@ -7,7 +7,7 @@
 {% endblock links %}
 
 {% block content %}
-    <form action="{% url 'reset_pass' uidb64 token %}", method="post" class="change_password">
+    <form action="{% url 'reset_pass' uidb64 token %}" method="post" class="change_password">
         {% csrf_token %}
         {{form|crispy}}
         <input value="Change" type="submit" class="btn btn-success form_button">

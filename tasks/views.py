@@ -13,6 +13,13 @@ class AuthFormsMixin:
         context['signup'] = CustomUserCreateForm()
         context['login'] = AuthenticationForm()
         return context
+
+    def get_simple_context(self):
+        context = {}
+        context['signup'] = CustomUserCreateForm()
+        context['login'] = AuthenticationForm()
+        return context
+
     
 
 class HomeView(AuthFormsMixin, TemplateView):

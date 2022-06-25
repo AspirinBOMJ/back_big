@@ -26,9 +26,3 @@ class CustomUserChangeForm(UserChangeForm):
 
 class ResetPasswordEmailForm(forms.Form):
     email = forms.EmailField(label="Enter your email")
-
-
-class ChangePasswordForm(forms.ModelForm):
-    class Meta:
-        model = get_user_model()
-        fields = ('password',)

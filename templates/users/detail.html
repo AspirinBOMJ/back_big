@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block links %}
+    <link href="{% static 'css/users/detail.css'%}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <b>{{user_detail.first_name}} 
+        </div>
+        <div class="card-body">
+            <img src = {{user_detail.image.url}} alt = "Avatar" class="user_detail_image">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    Email: {{user_detail.email}} 
+                </li>
+                <li class="list-group-item">
+                    Username: {{user_detail.username}}
+                </li>
+                <li class="list-group-item">
+                    Account active: 
+                    {% if user_detail.email_active %}
+                        {{user_detail.email_active}}
+                    {% else %}
+                        <a class="btn-sm btn-success" href="{% url 'email_send' %}">Activate account</a>
+                    {% endif %}
+                </li>
+                <li class="list-group-item">
+                    <a class="btn-sm btn-warning" href="{% url 'change_email' user.pk %}">Change email</a></b>
+                </li>
+                <li class="list-group-item">
+                    <a class="btn-sm btn-warning" href="{% url 'change_password' user.pk %}"><b>Change password</b></a></b>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock content %}

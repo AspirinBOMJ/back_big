@@ -1,11 +1,14 @@
 import random
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView, FormView, View, TemplateView
+from django.views.generic import CreateView, FormView, View, TemplateView, DetailView, UpdateView
 from django.contrib.auth import get_user_model, login, authenticate, logout
 from django.utils.encoding import force_str, force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth import update_session_auth_hash
 from .forms import *
 from tasks.views import AuthFormsMixin
 from django.http import HttpResponseRedirect, JsonResponse
@@ -48,8 +51,9 @@ class ActivateEmailSendView(LoginRequiredMixin, AuthFormsMixin, View):
                   'djangoemailsends@gmail.com', 
                   [request.user.email,], 
                   fail_silently=False)
-
-        return render(request=request, template_name=self.template_name, context={'title': 'Email send'})
+        context={'title': 'Email send'}
+        context.update(self.get_context_data())
+        return render(request=request, template_name=self.template_name, context=context)
 
 
 class ActivateEmailView(View):
@@ -117,13 +121,14 @@ class ResetPasswordSendView(AuthFormsMixin, View):
                   'djangoemailsends@gmail.com', 
                   [user.email,], 
                   fail_silently=False)
-
-        return render(request=request, template_name=self.template_name, context={'title': 'Reset password'})
+        context={'title': 'Reset password'}
+        context.update(self.get_simple_context())
+        return render(request=request, template_name=self.template_name, context=context)
 
 
 class ResetPasswordChangeView(AuthFormsMixin, View):
     template_name = 'users/reset_pass_change.html'
-    form_class = ChangePasswordForm
+    form_class = SetPasswordForm
 
     def get(self, request, uidb64, token):
         try:
@@ -133,13 +138,14 @@ class ResetPasswordChangeView(AuthFormsMixin, View):
             user = None
 
         if user is not None and reset_password_activation_token.check_token(user, token):
-            form = self.form_class()
-            return render(request=request, template_name=self.template_name, context={'title': 'Reset password', 'form': form, 'uidb64': uidb64, 'token': token})
+            form = self.form_class(user)
+            context={'title': 'Reset password', 'form': form, 'uidb64': uidb64, 'token': token}
+            context.update(self.get_simple_context())
+            return render(request=request, template_name=self.template_name, context=context)
         else:
             return redirect('reset_pass_error')
 
     def post(self, request, uidb64, token):
-        form = self.form_class(request.POST)
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = get_user_model().objects.get(pk=uid)
@@ -147,9 +153,9 @@ class ResetPasswordChangeView(AuthFormsMixin, View):
             user = None
 
         if user is not None and reset_password_activation_token.check_token(user, token):
-            form = self.form_class(request.POST)
+            form = self.form_class(user, request.POST)
             if form.is_valid():
-                user.set_password(request.POST['password'])
+                user.set_password(request.POST['new_password1'])
                 user.save()
                 return JsonResponse({'success_link': reverse_lazy('home')}, status=200)
             else:
@@ -161,3 +167,52 @@ class ResetPasswordChangeView(AuthFormsMixin, View):
 class ResetPasswordErrorView(AuthFormsMixin, TemplateView):
     template_name = 'users/reset_pass_error.html'
     extra_context = {'title': 'Reset password error'}
+
+
+class UserDetailView(UserPassesTestMixin, LoginRequiredMixin, AuthFormsMixin, DetailView):
+    template_name = 'users/detail.html'
+    model = get_user_model()
+    context_object_name = 'user_detail'
+    extra_context = {'title': 'Profile'}
+    
+    def test_func(self):
+        user_detail = get_user_model().objects.get(pk=self.kwargs['pk'])
+        return self.request.user == user_detail
+
+
+class UserChangePasswordView(UserPassesTestMixin, LoginRequiredMixin, AuthFormsMixin,  PasswordChangeView):
+    template_name = 'users/change_password.html'
+    form_class = SetPasswordForm
+    extra_context = {'title': 'Change password'}
+
+    def form_valid(self, form):
+        form.save()
+        update_session_auth_hash(self.request, form.user)
+        return JsonResponse({'success_link': reverse_lazy('user_detail', args=(str(self.request.user.pk),))}, status=200)
+
+    def form_invalid(self, form):
+        return JsonResponse({'form_errors': form.errors}, status=203)
+
+    def test_func(self):
+        user_detail = get_user_model().objects.get(pk=self.kwargs['pk'])
+        return self.request.user == user_detail
+
+
+class UserChangeEmailView(UserPassesTestMixin, LoginRequiredMixin, AuthFormsMixin,  UpdateView):
+    model = get_user_model()
+    template_name = 'users/change_email.html'
+    fields = ('email',)
+    extra_context = {'title': 'Change email'}
+
+    def form_valid(self, form):
+        self.request.user.email_active = False
+        self.request.user.save()
+        form.save()
+        return JsonResponse({'success_link': reverse_lazy('user_detail', args=(str(self.request.user.pk),))}, status=200)
+
+    def form_invalid(self, form):
+        return JsonResponse({'form_errors': form.errors}, status=203)
+
+    def test_func(self):
+        user_detail = get_user_model().objects.get(pk=self.kwargs['pk'])
+        return self.request.user == user_detail
