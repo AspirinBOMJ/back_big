@@ -1,0 +1,12 @@
+.content{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+    font-size: 5vw;
+    color: white;
+    background: linear-gradient(to right bottom, rgb(167, 91, 145), rgb(100, 199, 194));
+}
+form{
+    font-size: 15px;
+}

@@ -14,7 +14,7 @@ $(".signup").submit(function(e){
                 document.querySelector('.form-erros-signup').innerHTML = "<b>All done</b>"
             }
             else if("form_errors" in response){
-                document.querySelector('.form-erros-signup').innerHTML = "<b>Form erors</b>"
+                document.querySelector('.form-erros-signup').innerHTML = "<b>Form erors</b></br>"
                 for (let key in response["form_errors"]) {
                     document.querySelector('.form-erros-signup').innerHTML += key + ": " + response["form_errors"][key] + "</br>"
                 }
@@ -61,6 +61,19 @@ form_container.addEventListener("click", function(e) {
             if(form != all_forms[i]){
                 all_forms[i].classList.remove("active")
             }    
+        }
+        actives = false
+        for (let i = 0; i < all_forms.length; i++) {
+            if(all_forms[i].classList.contains('active')){
+                actives = true;
+                break;
+            }    
+        }
+        if (actives) {
+            document.querySelector('body').classList.add('stop')
+        } 
+        else{
+            document.querySelector('body').classList.remove('stop')
         }
 	}
 })

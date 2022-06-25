@@ -12,4 +12,4 @@ class CustomUserAdmin(UserAdmin):
     list_display = ['username', 'first_name', 'email', 'email_active', 'image']
 
 
-admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(CustomUser)

@@ -1,5 +1,7 @@
 from dataclasses import fields
+import email
 from pyexpat import model
+from statistics import mode
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import *
@@ -22,5 +24,11 @@ class CustomUserChangeForm(UserChangeForm):
         fields = ('first_name', 'email', 'image', 'email_active')
 
 
-class AccountActivatedForm(forms.Form):
-    code = forms.IntegerField(max_value=99999, label='Enter code from your email')
+class ResetPasswordEmailForm(forms.Form):
+    email = forms.EmailField(label="Enter your email")
+
+
+class ChangePasswordForm(forms.ModelForm):
+    class Meta:
+        model = get_user_model()
+        fields = ('password',)

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load crispy_forms_tags %}
 <html>
     <head>
         <meta charset="utf-8">
@@ -32,7 +33,7 @@
                                     </li>
                                     {% if not user.email_active%}
                                         <li class="nav-item">
-                                            <a class="nav-link" href="">Activate account</a>
+                                            <a class="nav-link" href="{% url 'email_send' %}">Activate account</a>
                                         </li>
                                     {% endif %}
                                 {% else %}
@@ -44,7 +45,10 @@
                                     </li>
                                     <li class="nav-item">
                                         <span class="signup-button nav-link pt">Sign Up</span>
-                                    </li>    
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'reset_pass_email' %}" class="signup-button nav-link pt">Reset password</a>
+                                    </li> 
                                 {% endif %}
                             </ul>
                         </li>
@@ -60,20 +64,24 @@
                 </div>
             </nav>
             <div class="form form-signup">
+                <button class="btn btn-danger signup-button">Close</button>
                 <form action="{% url 'signup' %}" method="post"  class="signup">
                     {% csrf_token %}
-                    {{signup.as_p}}
-                    <input type="submit" value="Sign Up">
+                    {{signup|crispy}}
+                    <input type="submit" value="Sign Up" class="btn btn-success form_button">
                 </form>
-                <div class="form-erros-signup"></div>
+                <div class="form-erros-signup errors">
+                </div>
             </div>
             <div class="form form-login">
+                <button class="btn btn-danger login-button">Close</button>
                 <form action="{% url 'login' %}" method="post"  class="login">
                     {% csrf_token %}
-                    {{login.as_p}}
-                    <input type="submit" value="Login">
+                    {{login|crispy}}
+                    <input type="submit" value="Login" class="btn btn-success form_button">
                 </form>
-                <div class="form-erros-login"></div>
+                <div class="form-erros-login errors">
+                </div>
             </div>
         </header>
         <div class="content">

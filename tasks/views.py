@@ -6,7 +6,6 @@ from users.forms import *
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail
 from django.urls import reverse_lazy
-import six
 
 class AuthFormsMixin:
     def get_context_data(self, **kwargs):
@@ -19,4 +18,5 @@ class AuthFormsMixin:
 class HomeView(AuthFormsMixin, TemplateView):
     template_name = 'tasks/home.html'
     extra_context = {'title': 'Home'}
+
     
