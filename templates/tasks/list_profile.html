@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block links %}
+    <link href="{% static 'css/tasks/list.css'%}" rel="stylesheet">
+    <link href="{% static 'css/tasks/list_profile.css'%}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+    <div class="tasks_logo">List of your tasks</div>
+    <div class="tasks">
+        <div>
+            <ul class="list-group tasks_list">
+                <li class="list-group-item list-group-item-danger tasks_logo_cards">
+                    <h3>Your unfinished tasks</h3>
+                </li>
+                {% for unfinished_task in unfinished_list %}
+                    <li class="list-group-item list-group-item-dark">
+                        <div class="card">
+                            <div class="card-header">
+                                {% if not unfinished_task.visible %}
+                                    Not visible
+                                {% else %}
+                                    Visible
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                {{unfinished_task.text}}
+                            </div>
+                            <div class="card-footer text-muted">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: {{unfinished_task.get_progress}}%" aria-valuenow="{{unfinished_task.get_progress}}" aria-valuemin="0" aria-valuemax="100">
+                                        Start in {{unfinished_task.date_start}} | End in {{unfinished_task.date_end}}
+                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+                {% if not unfinished_list %}
+                    <li class="list-group-item list-group-item-danger tasks_logo_cards">
+                        <h5>Empty</h5>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div>
+            <ul class="list-group tasks_list">
+                <li class="list-group-item list-group-item-danger tasks_logo_cards">
+                    <h3>Your finished tasks</h3>
+                </li>
+                {% for finished_task in finished_list %}
+                    <li class="list-group-item list-group-item-dark">
+                        <div class="card">
+                            <div class="card-header">
+                                {% if not finished_task.visible %}
+                                    Not visible
+                                {% else %}
+                                    Visible
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                {{finished_task.text}}
+                            </div>
+                            <div class="card-footer text-muted">
+                                Was be finished in {{finished_task.date_end}} 
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+                {% if not finished_list %}
+                    <li class="list-group-item list-group-item-danger tasks_logo_cards">
+                        <h5>Empty</h5>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    <script src={% static 'js/tasks/list.js' %}></script>
+{% endblock scripts %}

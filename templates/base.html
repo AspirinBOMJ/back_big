@@ -59,8 +59,13 @@
                             <ul class="navbar-nav mr-auto">
                                 <span class="nav-link active"><b>Pages:</b></span>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'home' %}">Home</a>
+                                    <a class="nav-link" href="{% url 'list' %}">List</a>
                                 </li>
+                                {% if user.is_authenticated %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'profile_list' user.pk %}">Your list</a>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </li>
                     </ul>

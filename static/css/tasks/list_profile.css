@@ -1,0 +1,13 @@
+.content{
+    background: linear-gradient(to right bottom, rgb(88, 203, 161), rgb(193, 193, 36));
+}
+.list-group-item-danger{
+    background-color: rgb(67, 153, 121);
+    color: white;
+}
+.progress{
+    background-color: rgba(136, 136, 27, 0.664);
+}
+.progress-bar{
+    background-color: rgb(183, 183, 76);
+}
