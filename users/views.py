@@ -181,17 +181,19 @@ class UserDetailView(UserPassesTestMixin, LoginRequiredMixin, AuthFormsMixin, De
 
 
 class UserChangePasswordView(UserPassesTestMixin, LoginRequiredMixin, AuthFormsMixin,  PasswordChangeView):
-    template_name = 'users/change_password.html'
+    template_name = 'users/change.html'
     form_class = SetPasswordForm
-    extra_context = {'title': 'Change password'}
+    extra_context = {'title': 'Change password', 'link_to_form': 'change_password'}
 
     def form_valid(self, form):
         form.save()
         update_session_auth_hash(self.request, form.user)
         return JsonResponse({'success_link': reverse_lazy('user_detail', args=(str(self.request.user.pk),))}, status=200)
 
+
     def form_invalid(self, form):
         return JsonResponse({'form_errors': form.errors}, status=203)
+
 
     def test_func(self):
         user_detail = get_user_model().objects.get(pk=self.kwargs['pk'])
@@ -200,9 +202,9 @@ class UserChangePasswordView(UserPassesTestMixin, LoginRequiredMixin, AuthFormsM
 
 class UserChangeEmailView(UserPassesTestMixin, LoginRequiredMixin, AuthFormsMixin,  UpdateView):
     model = get_user_model()
-    template_name = 'users/change_email.html'
+    template_name = 'users/change.html'
     fields = ('email',)
-    extra_context = {'title': 'Change email'}
+    extra_context = {'title': 'Change email', 'link_to_form': 'change_email'}
 
     def form_valid(self, form):
         self.request.user.email_active = False
@@ -210,8 +212,50 @@ class UserChangeEmailView(UserPassesTestMixin, LoginRequiredMixin, AuthFormsMixi
         form.save()
         return JsonResponse({'success_link': reverse_lazy('user_detail', args=(str(self.request.user.pk),))}, status=200)
 
+
     def form_invalid(self, form):
         return JsonResponse({'form_errors': form.errors}, status=203)
+
+
+    def test_func(self):
+        user_detail = get_user_model().objects.get(pk=self.kwargs['pk'])
+        return self.request.user == user_detail
+
+
+class UserChangeImageView(UserPassesTestMixin, LoginRequiredMixin, AuthFormsMixin,  UpdateView):
+    model = get_user_model()
+    template_name = 'users/change.html'
+    fields = ('image',)
+    extra_context = {'title': 'Change image', 'link_to_form': 'change_image'}
+
+    def form_valid(self, form):
+        form.save()
+        return JsonResponse({'success_link': reverse_lazy('user_detail', args=(str(self.request.user.pk),))}, status=200)
+
+
+    def form_invalid(self, form):
+        return JsonResponse({'form_errors': form.errors}, status=203)
+
+
+    def test_func(self):
+        user_detail = get_user_model().objects.get(pk=self.kwargs['pk'])
+        return self.request.user == user_detail
+
+
+class UserChangeNameView(UserPassesTestMixin, LoginRequiredMixin, AuthFormsMixin,  UpdateView):
+    model = get_user_model()
+    template_name = 'users/change.html'
+    fields = ('first_name',)
+    extra_context = {'title': 'Change name', 'link_to_form': 'change_name'}
+
+    def form_valid(self, form):
+        form.save()
+        return JsonResponse({'success_link': reverse_lazy('user_detail', args=(str(self.request.user.pk),))}, status=200)
+
+
+    def form_invalid(self, form):
+        return JsonResponse({'form_errors': form.errors}, status=203)
+
 
     def test_func(self):
         user_detail = get_user_model().objects.get(pk=self.kwargs['pk'])

@@ -28,10 +28,12 @@
                     {% endif %}
                 </li>
                 <li class="list-group-item">
-                    <a class="btn-sm btn-warning" href="{% url 'change_email' user.pk %}">Change email</a></b>
+                    <a class="btn-sm btn-warning" href="{% url 'change_email' user.pk %}">Change email</a></b> 
+                    <a class="btn-sm btn-warning" href="{% url 'change_password' user.pk %}"><b>Change password</b></a></b>
                 </li>
                 <li class="list-group-item">
-                    <a class="btn-sm btn-warning" href="{% url 'change_password' user.pk %}"><b>Change password</b></a></b>
+                    <a class="btn-sm btn-warning" href="{% url 'change_image' user.pk %}"><b>Change image</b></a></b>
+                    <a class="btn-sm btn-warning" href="{% url 'change_name' user.pk %}"><b>Change name</b></a></b>
                 </li>
             </ul>
         </div>

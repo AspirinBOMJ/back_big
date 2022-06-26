@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block links %}
+    <link href="{% static 'css/users/change.css'%}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+    <form action="{% url link_to_form user.pk %}" method="post" class="change" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form|crispy}}
+        <input value="Change" type="submit" class="btn btn-success form_button">
+    </form>
+    <div class="change_errors errors"></div>
+{% endblock content %}
+
+{% block scripts %}
+    <script src={% static 'js/users/change.js' %}></script>
+{% endblock scripts %}

@@ -68,7 +68,7 @@
             </nav>
             <div class="form form-signup">
                 <button class="btn btn-danger signup-button">Close</button>
-                <form action="{% url 'signup' %}" method="post"  class="signup">
+                <form action="{% url 'signup' %}" method="post"  class="signup" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{signup|crispy}}
                     <input type="submit" value="Sign Up" class="btn btn-success form_button">
