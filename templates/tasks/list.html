@@ -14,47 +14,47 @@
                 <li class="list-group-item list-group-item-danger tasks_logo_cards">
                     <h3>Unfinished tasks</h3>
                 </li>
-                {% for unfinished_task in unfinished_list %}
-                    <li class="list-group-item list-group-item-dark">
-                        <div class="card">
-                            <div class="card-header">
-                                {{unfinished_task.author.first_name}}
-                            </div>
-                            <div class="card-body">
-                                {{unfinished_task.text}}
-                            </div>
-                            <div class="card-footer text-muted">
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" style="width: {{unfinished_task.get_progress}}%" aria-valuenow="{{unfinished_task.get_progress}}" aria-valuemin="0" aria-valuemax="100">
-                                        Start in {{unfinished_task.date_start}} | End in {{unfinished_task.date_end}}
-                                     </div>
-                                </div>
-                            </div>
-                        </div>
+                <li class="list-group-item list-group-item-danger tasks_logo_cards">
+                    <form action="{% url 'sort_task' True False%}" method="post" class="unfinished_form sort_form">
+                        {% csrf_token %}
+                        {{sort_form|crispy}}
+                        <input class="btn btn-success form_button" type="submit" value="Sort">
+                    </form>
+                </li>
+                <div class="unfinished_tasks">
+                    {% for unfinished_task in unfinished_list %}
+                        {% include 'tasks/task.html' with task=unfinished_task profile=False %}
+                    {% endfor %}
+                </div>
+                {% if not unfinished_list %}
+                    <li class="list-group-item list-group-item-danger tasks_logo_cards">
+                        <h5>Empty</h5>
                     </li>
-                {% endfor %}
+                {% endif %}
             </ul>
         </div>
         <div>
             <ul class="list-group tasks_list">
-                <li class="list-group-item list-group-item-danger tasks_logo_cards">
+                <li class="list-group-item list-group-item-danger tasks_logo_cards" class="finished_form">
                     <h3>Finished tasks</h3>
                 </li>
-                {% for finished_task in finished_list %}
-                    <li class="list-group-item list-group-item-dark">
-                        <div class="card">
-                            <div class="card-header">
-                                {{finished_task.author.first_name}}
-                            </div>
-                            <div class="card-body">
-                                {{finished_task.text}}
-                            </div>
-                            <div class="card-footer text-muted">
-                                Was be finished in {{finished_task.date_end}} 
-                            </div>
-                        </div>
+                <li class="list-group-item list-group-item-danger tasks_logo_cards">
+                    <form action="{% url 'sort_task' True True%}" method="post" class="finished_form sort_form">
+                        {% csrf_token %}
+                        {{sort_form|crispy}}
+                        <input class="btn btn-success form_button" type="submit" value="Sort">
+                    </form>
+                </li>
+                <div class="finished_tasks">
+                    {% for finished_task in finished_list %}
+                        {% include 'tasks/task.html' with task=finished_task profile=False %}
+                    {% endfor %}
+                </div>
+                {% if not finished_list %}
+                    <li class="list-group-item list-group-item-danger tasks_logo_cards">
+                        <h5>Empty</h5>
                     </li>
-                {% endfor %}
+                {% endif %}
             </ul>
         </div>
     </div>

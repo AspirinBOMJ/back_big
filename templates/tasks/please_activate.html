@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block links %}
+    <link href="{% static 'css/tasks/please_activate.css'%}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+    <div>
+        Your email not active! If you want to create task please activate your email
+    </div>
+    <a href="{% url 'email_send' %}" class="btn btn-danger">Activate</a>
+{% endblock content %}

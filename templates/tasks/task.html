@@ -1,0 +1,31 @@
+<li class="list-group-item list-group-item-dark">
+    <div class="card">
+        <div class="card-header">
+            {% if profile %}
+                {% if not unfinished_task.visible %}
+                    Not visible
+                {% else %}
+                    Visible
+                {% endif %}
+            {% else %}
+                {{task.author.first_name}}
+            {% endif %}
+        </div>
+        <div class="card-body">
+            {{task.text}}
+        </div>
+        <div class="card-footer text-muted">
+            {% if task.finished %}
+                <div class="card-footer text-muted">
+                    Was be finished in {{task.date_end}} 
+                </div>
+            {% else %}
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: {{task.get_progress}}%" aria-valuenow="{{task.get_progress}}" aria-valuemin="0" aria-valuemax="100">
+                        Start in {{task.date_start}} | End in {{task.date_end}}
+                    </div>
+                </div>
+            {% endif %} 
+        </div>
+    </div>
+</li>

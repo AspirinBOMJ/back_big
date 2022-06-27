@@ -52,7 +52,7 @@ class ActivateEmailSendView(LoginRequiredMixin, AuthFormsMixin, View):
                   [request.user.email,], 
                   fail_silently=False)
         context={'title': 'Email send'}
-        context.update(self.get_context_data())
+        context.update(self.get_simple_context())
         return render(request=request, template_name=self.template_name, context=context)
 
 

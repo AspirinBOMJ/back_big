@@ -1,15 +1,15 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.utils import timezone
 import datetime
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_str, force_bytes
 
 
 class Task(models.Model):
+    slug = models.TextField(unique=True, null=True, blank=True)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    date_start = models.DateField(auto_now_add=True)
-    date_end = models.DateField(default=timezone.now())
+    date_start = models.DateField(default=datetime.date.today())
+    date_end = models.DateField(default=datetime.date.today())
     text = models.CharField(max_length=50)
     finished = models.BooleanField(default=False)
     visible = models.BooleanField(default=False)
