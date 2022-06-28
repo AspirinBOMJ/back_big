@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 import datetime
 from django.utils.http import urlsafe_base64_encode
+from django.urls import reverse
 from django.utils.encoding import force_str, force_bytes
 
 
@@ -10,7 +11,7 @@ class Task(models.Model):
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     date_start = models.DateField(default=datetime.date.today())
     date_end = models.DateField(default=datetime.date.today())
-    text = models.CharField(max_length=50)
+    text = models.CharField(max_length=200)
     finished = models.BooleanField(default=False)
     visible = models.BooleanField(default=False)
 
@@ -21,3 +22,8 @@ class Task(models.Model):
 
     def __str__(self):
         return self.text
+
+
+    def get_absolute_url(self):
+        return reverse('task_detail', kwargs={"slug": self.slug})
+    

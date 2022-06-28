@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block links %}
+    <link href="{% static 'css/tasks/please_activate.css'%}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+    Are you sure?
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Delete" class="btn btn-danger">
+    </form>
+{% endblock content %}

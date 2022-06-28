@@ -15,7 +15,7 @@
                     <h3>Unfinished tasks</h3>
                 </li>
                 <li class="list-group-item list-group-item-danger tasks_logo_cards">
-                    <form action="{% url 'sort_task' True False%}" method="post" class="unfinished_form sort_form">
+                    <form action="{% url 'sort_task' False False%}" method="post" class="unfinished_form sort_form">
                         {% csrf_token %}
                         {{sort_form|crispy}}
                         <input class="btn btn-success form_button" type="submit" value="Sort">
@@ -39,7 +39,7 @@
                     <h3>Finished tasks</h3>
                 </li>
                 <li class="list-group-item list-group-item-danger tasks_logo_cards">
-                    <form action="{% url 'sort_task' True True%}" method="post" class="finished_form sort_form">
+                    <form action="{% url 'sort_task' False True%}" method="post" class="finished_form sort_form">
                         {% csrf_token %}
                         {{sort_form|crispy}}
                         <input class="btn btn-success form_button" type="submit" value="Sort">

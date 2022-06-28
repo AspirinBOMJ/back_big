@@ -7,7 +7,7 @@
 {% endblock links %}
 
 {% block content %}
-    <form action="{% url 'create_task' %}" method="post" class="create_task">
+    <form action="{% url 'task_create' %}" method="post" class="create_task">
         {% csrf_token %}
         {{form|crispy}}
         <input value="Creaet" type="submit" class="btn btn-success form_button">

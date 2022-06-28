@@ -1,0 +1,39 @@
+.card-img-top{
+    max-width: 300px;
+}
+.content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+    color: white;
+    background: linear-gradient(to right bottom, rgb(88, 199, 203), rgb(230, 255, 1));
+}
+.list-group-horizontal{
+    margin: 20px;
+    width: calc(100% - 100px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.list-group-item{
+    margin: 10px;
+    min-width: 300px;
+}
+.author{
+    width: calc(20% - 20px);
+    color: black;
+}
+.list-group-item-dark{
+    width: calc(80% - 20px);
+}
+.progress{
+    height: 30px;
+    font-size: calc(10px + (7 + 7 * 0.7) * ((100vw - 320px) / 1280));;
+    background-color: rgba(145, 32, 32, 0.337);
+}
+.progress-bar{
+    background-color: rgb(238, 99, 99);
+}

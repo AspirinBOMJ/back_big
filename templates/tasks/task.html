@@ -2,17 +2,22 @@
     <div class="card">
         <div class="card-header">
             {% if profile %}
-                {% if not unfinished_task.visible %}
-                    Not visible
-                {% else %}
+                {% if task.visible %}
                     Visible
+                {% else %}
+                    Not visible
                 {% endif %}
+                <a href="{% url 'task_delete' task.slug %}" class="btn-sm btn-danger">Delete</a>
+                <a href="{% url 'task_update' task.slug %}" class="btn-sm btn-warning">Update</a>
             {% else %}
                 {{task.author.first_name}}
             {% endif %}
         </div>
         <div class="card-body">
             {{task.text}}
+            {% if not detail %}
+                <a href="{% url 'task_detail' task.slug %}" class="btn-sm btn-success">Detail</a>
+            {% endif %}
         </div>
         <div class="card-footer text-muted">
             {% if task.finished %}

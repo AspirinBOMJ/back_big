@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block links %}
+    <link href="{% static 'css/tasks/task_detail.css'%}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+    <ul class="list-group list-group-horizontal">
+        <li class="list-group-item author">
+            <div class="card">
+                <img src={{task_detail.author.image.url}} class="card-img-top" alt="card-group-image">
+                <div class="card-body">
+                    <h5 class="card-title">Name: {{task_detail.author.first_name}}</h5>
+                    <h5 class="card-title">Email: {{task_detail.author.email}}</h5>
+                </div>
+                <div class="card-footer text-muted">
+                    Start in {{task_detail.date_start}}
+                </div>
+            </div>
+        </li>
+        {% if task_detail.author == user %}
+            {% include 'tasks/task.html' with task=task_detail profile=True detail=True%}
+        {% else %}
+            {% include 'tasks/task.html' with task=task_detail profile=False detail=True%}
+        {% endif %}
+    </ul>
+{% endblock content %}

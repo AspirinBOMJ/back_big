@@ -1,7 +1,8 @@
 import math
 from pydoc import visiblename
+from urllib import request
 from django.shortcuts import render, redirect
-from django.views.generic import TemplateView, ListView, View, CreateView, FormView
+from django.views.generic import TemplateView, ListView, View, CreateView, FormView, DeleteView, DetailView, UpdateView
 from users.forms import *
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.forms import AuthenticationForm
@@ -85,17 +86,22 @@ class SortTaskHandlerView(View):
                 case 'date_ascending':
                     tasks = Task.objects.all().order_by('date_start')
 
-            if bool(self.kwargs['finished'] == 'True'):
+            if self.kwargs['finished'] == 'True':
                 tasks = tasks.filter(finished=True)
             else:
                 tasks = tasks.filter(finished=False)
             
-            if bool(self.kwargs['visible'] == 'True'):
+            if self.kwargs['profile'] == 'True':
+                tasks = tasks.filter(author=request.user)
+            else:
                 tasks = tasks.filter(visible=True)
 
             html = ''
             for task in tasks:
-                html += render_to_string('tasks/task.html', context={'task': task})
+                if self.kwargs['profile'] == 'True':
+                    html += render_to_string('tasks/task.html', context={'task': task,})
+                else:
+                    html += render_to_string('tasks/task.html', context={'task': task,})
 
             return JsonResponse({'html': html, 'finished': self.kwargs['finished']}, status=200)
         else:
@@ -109,7 +115,7 @@ class PleaseActivateView(AuthFormsMixin, TemplateView):
 
 class TaskCreationView(LoginRequiredMixin, AuthFormsMixin, TasksUpdateMixin, CreateView):
     model = Task
-    template_name = 'tasks/create_task.html'
+    template_name = 'tasks/task_create.html'
     fields = ('text', 'date_end', 'visible')
     extra_context = {'title': 'Create task'}
     
@@ -136,11 +142,67 @@ class TaskCreationView(LoginRequiredMixin, AuthFormsMixin, TasksUpdateMixin, Cre
         task = Task.objects.create(author=self.request.user, text=self.request.POST['text'], date_end=self.request.POST['date_end'], visible=visible)
         task.slug = create_slug_for_task(task.pk, task.author.pk)
         task.save()
-        return JsonResponse({'success_link': reverse_lazy('list')}, status=200)
+        return JsonResponse({'success_link': reverse_lazy('profile_list', args=(self.request.user.pk,))}, status=200)
 
 
     def form_invalid(self, form):
         return JsonResponse({'form_errors': form.errors}, status=203)
         
 
-    
+class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, AuthFormsMixin, DeleteView):
+    model = Task
+    template_name = 'tasks/task_delete.html'
+
+
+    def get_success_url(self):
+        return reverse_lazy('profile_list', args=(self.request.user.pk,))
+
+
+    def test_func(self):
+        user = Task.objects.get(slug=self.kwargs['slug']).author
+        return self.request.user == user
+
+
+class TaskDetailView(AuthFormsMixin, DetailView):
+    model = Task
+    template_name = 'tasks/task_detail.html'
+    context_object_name = 'task_detail'
+
+    def get(self, request, *args, **kwargs):
+        if not self.get_object().visible and self.get_object().author != request.user:
+            return redirect('list')
+
+        return super().get(request, *args, **kwargs)
+
+
+class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, AuthFormsMixin, UpdateView):
+    model = Task
+    fields = ['text', 'date_end', 'visible']
+    template_name = 'tasks/task_update.html'
+    extra_context = {'title': 'Update'}
+
+    def test_func(self):
+        user = self.model.objects.get(slug=self.kwargs['slug']).author
+        return self.request.user == user
+
+
+    def get(self, request, *args, **kwargs):
+        task = self.model.objects.get(slug=self.kwargs['slug'])
+        if task.finished:
+            self.fields = ['text', 'visible']
+        return super().get(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['task_slug'] = self.kwargs['slug']
+        return context
+
+
+    def form_valid(self, form):
+        form.save()
+        return JsonResponse({'success_link': reverse_lazy('task_detail', args=(self.kwargs['slug'],))}, status=200)
+
+
+    def form_invalid(self, form):
+        return JsonResponse({'form_errors': form.errors}, status=203)

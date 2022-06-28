@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block links %}
+    <link href="{% static 'css/tasks/task_update.css'%}" rel="stylesheet">
+{% endblock links %}
+
+{% block content %}
+    <form action="{% url 'task_update' task_slug %}" method="post" class="task_update">
+        {% csrf_token %}
+        {{form|crispy}}
+        <input value="Creaet" type="submit" class="btn btn-success form_button">
+    </form>
+    <div class="task_update_errors errors"></div>
+{% endblock content %}
+
+{% block scripts %}
+    <script src={% static 'js/tasks/task_update.js' %}></script>
+{% endblock scripts %}
