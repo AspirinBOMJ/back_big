@@ -1,0 +1,25 @@
+{% load static %}
+
+{{subtask.text}}
+{% if subtask.finished %}
+    <span class="btn-sm btn-success finished_sub">✔</span>
+    {% if profile %}
+        <form action="{% url 'subtask_activate' subtask.pk %}" method="get" class="subtask_activate_form">
+            {% csrf_token %}
+            <input class="btn-sm btn-danger subtask-act subtask_input" type="submit" value="X">
+        </form>
+    {% endif %}  
+{% else %}
+    {% if profile %}
+        <form action="{% url 'subtask_activate' subtask.pk %}" method="get" class="subtask_activate_form">
+            {% csrf_token %}
+            <input class="btn-sm btn-danger subtask-act subtask_input" type="submit" value="✔">
+        </form>
+    {% endif %}
+{% endif %}
+{% if profile %}
+    <form action="{% url 'subtask_delete' subtask.pk %}" method="get" class="subtask_delete_form">
+        {% csrf_token %}
+        <input class="btn-sm btn-danger subtask_input" type="submit" value="Delete">
+    </form>
+{% endif %}

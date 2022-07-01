@@ -26,4 +26,17 @@ class Task(models.Model):
 
     def get_absolute_url(self):
         return reverse('task_detail', kwargs={"slug": self.slug})
-    
+
+
+class SubTask(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    text = models.CharField(max_length=30)
+    finished = models.BooleanField(default=False)
+
+
+    def __str__(self):
+        return self.text
+
+
+    def get_absolute_url(self):
+        return reverse('task_detail', kwargs={"slug": self.task.slug})

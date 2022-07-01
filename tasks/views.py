@@ -1,4 +1,5 @@
 import math
+from os import remove
 from pydoc import visiblename
 from urllib import request
 from django.shortcuts import render, redirect
@@ -29,7 +30,18 @@ class AuthFormsMixin:
         context['login'] = AuthenticationForm()
         return context
 
- 
+
+
+class TasksUpdateMixin:
+    def get(self, request, *args, **kwargs):
+        all_unfinished_tasks = Task.objects.all().filter(finished=False)
+        for task in all_unfinished_tasks:
+            if task.date_end <= datetime.date.today():
+                task.finished = True
+                task.save()
+        return super().get(request, *args, **kwargs)
+
+
 class TaskListView(AuthFormsMixin, ListView):
     model = Task
     template_name = 'tasks/list.html'
@@ -42,16 +54,6 @@ class TaskListView(AuthFormsMixin, ListView):
         context['unfinished_list'] = self.model.objects.all().filter(finished=False, visible=True)
         context['sort_form'] = self.form_class()
         return context
-
-
-class TasksUpdateMixin:
-    def get(self, request, *args, **kwargs):
-        all_unfinished_tasks = Task.objects.all().filter(finished=False)
-        for task in all_unfinished_tasks:
-            if task.date_end <= datetime.date.today():
-                task.finished = True
-                task.save()
-        return super().get(request, *args, **kwargs)
 
 
 class TaskProfileListView(UserPassesTestMixin, LoginRequiredMixin, AuthFormsMixin, TasksUpdateMixin, ListView):
@@ -70,6 +72,7 @@ class TaskProfileListView(UserPassesTestMixin, LoginRequiredMixin, AuthFormsMixi
         context['finished_list'] = self.model.objects.all().filter(finished=True, author=user)
         context['unfinished_list'] = self.model.objects.all().filter(finished=False, author=user)
         context['sort_form'] = self.form_class()
+        context['subtask_form'] = SubTaskForm()
         return context
 
 
@@ -99,9 +102,9 @@ class SortTaskHandlerView(View):
             html = ''
             for task in tasks:
                 if self.kwargs['profile'] == 'True':
-                    html += render_to_string('tasks/task.html', context={'task': task,})
+                    html += render_to_string('tasks/task.html', context={'task': task, 'profile': True, 'subtask_form': SubTaskForm()}, request=request)
                 else:
-                    html += render_to_string('tasks/task.html', context={'task': task,})
+                    html += render_to_string('tasks/task.html', context={'task': task,}, request=request)
 
             return JsonResponse({'html': html, 'finished': self.kwargs['finished']}, status=200)
         else:
@@ -168,6 +171,13 @@ class TaskDetailView(AuthFormsMixin, DetailView):
     template_name = 'tasks/task_detail.html'
     context_object_name = 'task_detail'
 
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['subtask_form'] = SubTaskForm()
+        return context
+
+
     def get(self, request, *args, **kwargs):
         if not self.get_object().visible and self.get_object().author != request.user:
             return redirect('list')
@@ -206,3 +216,51 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, AuthFormsMixin, Up
 
     def form_invalid(self, form):
         return JsonResponse({'form_errors': form.errors}, status=203)
+
+class SubTaskCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    def post(self, request, *args, **kwargs):
+        form = SubTaskForm(request.POST)
+        if form.is_valid():
+            text = request.POST['text']
+            task = Task.objects.get(slug=self.kwargs['slug'])
+            subtask = SubTask.objects.create(text=text, task=task)
+            html = render_to_string('tasks/subtask.html', context={'subtask': subtask, 'profile': True}, request=request)
+            return JsonResponse({'subtask_html': html, 'task_slug': self.kwargs['slug'], 'pk': subtask.pk}, status=200)
+        else:
+            return JsonResponse({'form_errors': form.errors, 'task_slug': self.kwargs['slug']}, status=203)
+
+
+    def test_func(self):
+        user = Task.objects.get(slug=self.kwargs['slug']).author
+        return self.request.user == user
+
+    
+class SubTaskActivateView(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        subtask = SubTask.objects.get(pk = self.kwargs['pk'])
+        if subtask.finished:
+            subtask.finished = False
+        else:
+            subtask.finished = True
+        subtask.save()
+        html = render_to_string('tasks/subtask.html', context={'subtask': subtask, 'profile': True}, request=request)
+        return JsonResponse({'subtask_finished_html': html, 'pk': self.kwargs['pk']}, status=200)
+
+
+    def test_func(self):
+        user = SubTask.objects.get(pk=self.kwargs['pk']).task.author
+        return self.request.user == user
+
+
+class SubTaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        SubTask.objects.get(pk = self.kwargs['pk']).delete()
+        return JsonResponse({'pk': self.kwargs['pk']}, status=200)
+        
+
+    def test_func(self):
+        user = SubTask.objects.get(pk=self.kwargs['pk']).task.author
+        return self.request.user == user

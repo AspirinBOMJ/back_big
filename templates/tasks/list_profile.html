@@ -3,6 +3,8 @@
 {% load crispy_forms_tags %}
 
 {% block links %}
+    <link href="{% static 'css/tasks/task.css'%}" rel="stylesheet">
+    <link href="{% static 'css/tasks/subtask.css'%}" rel="stylesheet">
     <link href="{% static 'css/tasks/list.css'%}" rel="stylesheet">
     <link href="{% static 'css/tasks/list_profile.css'%}" rel="stylesheet">
 {% endblock links %}
@@ -25,7 +27,7 @@
                 </li>
                 <div class="unfinished_tasks">
                     {% for unfinished_task in unfinished_list %}
-                        {% include 'tasks/task.html' with task=unfinished_task profile=True %}
+                        {% include 'tasks/task.html' with task=unfinished_task profile=True subtask_form=subtask_form %}
                     {% endfor %}
                 </div>
                 {% if not unfinished_list %}
@@ -49,7 +51,7 @@
                 </li>
                 <div class="finished_tasks">
                     {% for finished_task in finished_list %}
-                        {% include 'tasks/task.html' with task=finished_task profile=True %}
+                        {% include 'tasks/task.html' with task=finished_task profile=True subtask_form=subtask_form%}
                     {% endfor %}
                 </div>
                 {% if not finished_list %}
@@ -64,4 +66,5 @@
 
 {% block scripts %}
     <script src={% static 'js/tasks/list.js' %}></script>
+    <script src={% static 'js/tasks/subtask.js' %}></script>
 {% endblock scripts %}

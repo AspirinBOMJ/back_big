@@ -3,6 +3,8 @@
 {% load crispy_forms_tags %}
 
 {% block links %}
+    <link href="{% static 'css/tasks/task.css'%}" rel="stylesheet">
+    <link href="{% static 'css/tasks/subtask.css'%}" rel="stylesheet">
     <link href="{% static 'css/tasks/list.css'%}" rel="stylesheet">
 {% endblock links %}
 
@@ -62,4 +64,5 @@
 
 {% block scripts %}
     <script src={% static 'js/tasks/list.js' %}></script>
+    <script src={% static 'js/tasks/subtask.js' %}></script>
 {% endblock scripts %}

@@ -1,3 +1,5 @@
+{% load static %}
+{% load crispy_forms_tags %}
 <li class="list-group-item list-group-item-dark">
     <div class="card">
         <div class="card-header">
@@ -14,7 +16,28 @@
             {% endif %}
         </div>
         <div class="card-body">
-            {{task.text}}
+            <b>{{task.text}}</b>
+            {% if profile %}
+                <br/><button class="btn btn-success btn_sub_create form_button">+Subtask</button>
+                <form action="{% url 'subtask_create' task.slug %}" method="post" class="subtask_form">
+                    {% csrf_token %}
+                    {{subtask_form|crispy}}
+                    <input type="submit" value="+Create" class="btn btn-success form_button">
+                </form>
+                <div class="sub_errors-{{task.slug}} errors"></div>
+            {% endif %}
+                    <button class="btn btn-success sub_list_but form_button">Subtasks:</button>
+                    <ul class="list-group subtasks sub-{{task.slug}} subtasks_list">
+                        {% if task.subtask_set.all %}
+                        {% for subtask in task.subtask_set.all %}
+                            <li class="list-group-item subtask-{{subtask.pk}}">
+                                {% include 'tasks/subtask.html' with subtask=subtask profile=profile %}
+                            </li>
+                        {% endfor %}
+                        {% else %}
+                            <li class="list-group-item">Empty</li>
+                        {% endif %}
+                    </ul>
             {% if not detail %}
                 <a href="{% url 'task_detail' task.slug %}" class="btn-sm btn-success">Detail</a>
             {% endif %}

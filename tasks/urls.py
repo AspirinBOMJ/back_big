@@ -9,5 +9,8 @@ urlpatterns = [
     path('task/delete/<slug:slug>/', TaskDeleteView.as_view(), name='task_delete'),
     path('task/detail/<slug:slug>/', TaskDetailView.as_view(), name='task_detail'),
     path('task/update/<slug:slug>/', TaskUpdateView.as_view(), name='task_update'),
+    path('subtask/create/<slug:slug>/', SubTaskCreateView.as_view(), name='subtask_create'),
+    path('subtask/activate/<pk>/', SubTaskActivateView.as_view(), name='subtask_activate'),
+    path('subtask/delete/<pk>/', SubTaskDeleteView.as_view(), name='subtask_delete'),
     path('list/', TaskListView.as_view(), name='list'),
 ]

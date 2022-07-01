@@ -1,0 +1,15 @@
+.subtasks{
+    margin: 10px;
+    margin-left: 0;
+}
+.subimg{
+    width: 15px;
+    height: 15px;
+}
+.finished_sub:hover{
+    background-color: #28a745;
+}
+.subtask_input{
+    width: 60px;
+    padding: 0;
+}

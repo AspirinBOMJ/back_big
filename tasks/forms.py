@@ -1,4 +1,4 @@
-from dataclasses import field
+from dataclasses import field, fields
 from pyexpat import model
 from random import choices
 from django import forms
@@ -10,3 +10,10 @@ class SortTasksForm(forms.Form):
     ('date_ascending', 'Sort by date ascending'))
 
     choices = forms.ChoiceField(choices=CHOICES, label='')
+
+
+class SubTaskForm(forms.ModelForm):
+    text = forms.CharField(max_length=30, label='Create new subtask')
+    class Meta:
+        model = SubTask
+        fields = ['text',] 
