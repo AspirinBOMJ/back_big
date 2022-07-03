@@ -201,7 +201,7 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, AuthFormsMixin, Up
 
     def post(self, request, *args, **kwargs):
         task = self.model.objects.get(slug=self.kwargs['slug'])
-        if request.POST['date_end'] <= task.date_start:
+        if datetime.datetime.strptime(request.POST['date_end'], '%Y-%m-%d').date() <= task.date_start:
             return JsonResponse({'form_errors': {'Date': 'To early'}}, status=203)
 
 
