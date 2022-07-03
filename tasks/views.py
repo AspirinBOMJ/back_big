@@ -199,6 +199,12 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, AuthFormsMixin, Up
         return self.request.user == user
 
 
+    def post(self, request, *args, **kwargs):
+        task = self.model.objects.get(slug=self.kwargs['slug'])
+        if request.POST['date_end'] <= task.date_start:
+            return JsonResponse({'form_errors': {'Date': 'To early'}}, status=203)
+
+
     def get(self, request, *args, **kwargs):
         task = self.model.objects.get(slug=self.kwargs['slug'])
         if task.finished:
@@ -283,7 +289,7 @@ class CommentCreateView(LoginRequiredMixin, View):
             return JsonResponse({'form_errors': form.errors, 'task_slug': self.kwargs['slug']}, status=203)
 
 
-class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, AuthFormsMixin, View):
     def get(self, request, *args, **kwargs):
         Comment.objects.get(pk = self.kwargs['pk']).delete()
         return JsonResponse({'pk': self.kwargs['pk']}, status=200)
