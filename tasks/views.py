@@ -289,7 +289,7 @@ class CommentCreateView(LoginRequiredMixin, View):
             return JsonResponse({'form_errors': form.errors, 'task_slug': self.kwargs['slug']}, status=203)
 
 
-class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, AuthFormsMixin, View):
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
     def get(self, request, *args, **kwargs):
         Comment.objects.get(pk = self.kwargs['pk']).delete()
         return JsonResponse({'pk': self.kwargs['pk']}, status=200)
@@ -300,6 +300,6 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, AuthFormsMixin,
         return self.request.user == user
 
 
-class HomeView(TemplateView):
+class HomeView(AuthFormsMixin, TemplateView):
     template_name = 'tasks/home.html'
     extra_context = {'title': 'Home'}
