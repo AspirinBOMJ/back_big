@@ -24,7 +24,7 @@
 }
 .tasks_list{
     margin: 10px;
-    min-width: 600px;
+    min-width: 300px;
     width: calc(50vw - 30px);
 }
 .progress{

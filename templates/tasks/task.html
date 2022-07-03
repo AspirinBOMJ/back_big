@@ -30,16 +30,32 @@
                     <ul class="list-group subtasks sub-{{task.slug}} subtasks_list">
                         {% if task.subtask_set.all %}
                         {% for subtask in task.subtask_set.all %}
-                            <li class="list-group-item subtask-{{subtask.pk}}">
+                            <li class="list-group-item subtask-{{subtask.pk}} good-list">
                                 {% include 'tasks/subtask.html' with subtask=subtask profile=profile %}
                             </li>
                         {% endfor %}
                         {% else %}
-                            <li class="list-group-item">Empty</li>
+                            <li class="list-group-item good-list">Empty</li>
                         {% endif %}
                     </ul>
             {% if not detail %}
                 <a href="{% url 'task_detail' task.slug %}" class="btn-sm btn-success">Detail</a>
+            {% endif %}
+
+            {% if detail %}
+                <form action="{% url 'comment_create' task.slug %}" method="post" class="comment_form">
+                    {% csrf_token %}
+                    {{comment_form}}
+                    <input type="submit" value="Send" class="btn btn-success">
+                </form>
+                <div class="comm_errors-{{task.slug}} errors"></div>
+                <ul class="list-group subtasks comments-{{task.slug}}">
+                    {% for comment in task.comment_set.all %}
+                        <li class="list-group-item comment-{{comment.pk}} good-list">
+                            {% include 'tasks/comment.html' with comment=comment%}
+                        </li>
+                    {% endfor %}
+                </ul>
             {% endif %}
         </div>
         <div class="card-footer text-muted">

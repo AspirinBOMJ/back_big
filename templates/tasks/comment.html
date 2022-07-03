@@ -1,0 +1,7 @@
+{{comment.text}}
+{% if comment.author == user %}
+    <form action="{% url 'comment_delete' comment.pk %}" method="get" class="comment_delete_form">
+        {% csrf_token %}
+        <input class="btn-sm btn-danger subtask_input" type="submit" value="Delete">
+    </form>
+{% endif %}

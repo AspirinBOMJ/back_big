@@ -12,5 +12,8 @@ urlpatterns = [
     path('subtask/create/<slug:slug>/', SubTaskCreateView.as_view(), name='subtask_create'),
     path('subtask/activate/<pk>/', SubTaskActivateView.as_view(), name='subtask_activate'),
     path('subtask/delete/<pk>/', SubTaskDeleteView.as_view(), name='subtask_delete'),
+    path('comment/create/<slug:slug>/', CommentCreateView.as_view(), name='comment_create'),
+    path('comment/delete/<pk>/', CommentDeleteView.as_view(), name='comment_delete'),
     path('list/', TaskListView.as_view(), name='list'),
+     path('', HomeView.as_view(), name='home'),
 ]

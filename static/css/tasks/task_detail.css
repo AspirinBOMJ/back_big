@@ -22,6 +22,9 @@
     margin: 10px;
     min-width: 300px;
 }
+.good-list{
+    min-width: auto;
+}
 .author{
     width: calc(20% - 20px);
     color: black;

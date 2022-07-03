@@ -155,6 +155,7 @@ class TaskCreationView(LoginRequiredMixin, AuthFormsMixin, TasksUpdateMixin, Cre
 class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, AuthFormsMixin, DeleteView):
     model = Task
     template_name = 'tasks/task_delete.html'
+    extra_context = {'title': 'Delete'}
 
 
     def get_success_url(self):
@@ -170,11 +171,13 @@ class TaskDetailView(AuthFormsMixin, DetailView):
     model = Task
     template_name = 'tasks/task_detail.html'
     context_object_name = 'task_detail'
+    extra_context = {'title': 'Detail'}
 
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['subtask_form'] = SubTaskForm()
+        context['comment_form'] = CommentForm()
         return context
 
 
@@ -264,3 +267,33 @@ class SubTaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         user = SubTask.objects.get(pk=self.kwargs['pk']).task.author
         return self.request.user == user
+
+
+class CommentCreateView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            text = request.POST['text']
+            task = Task.objects.get(slug=self.kwargs['slug'])
+            author = request.user
+            comment = Comment.objects.create(author=author, task=task, text=text)
+            html = render_to_string('tasks/comment.html', context={'comment': comment, 'profile': True}, request=request)
+            return JsonResponse({'comment_html': html, 'task_slug': self.kwargs['slug'], 'pk': comment.pk}, status=200)
+        else:
+            return JsonResponse({'form_errors': form.errors, 'task_slug': self.kwargs['slug']}, status=203)
+
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def get(self, request, *args, **kwargs):
+        Comment.objects.get(pk = self.kwargs['pk']).delete()
+        return JsonResponse({'pk': self.kwargs['pk']}, status=200)
+        
+
+    def test_func(self):
+        user = Comment.objects.get(pk=self.kwargs['pk']).author
+        return self.request.user == user
+
+
+class HomeView(TemplateView):
+    template_name = 'tasks/home.html'
+    extra_context = {'title': 'Home'}

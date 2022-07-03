@@ -37,3 +37,16 @@
     opacity: 1;
     height: auto;
 }
+.comment_form{
+    font-size: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+.comment_form input{
+    height: 30px;
+    border-radius: 5px;
+    padding: 0;
+    margin: 5px;
+}

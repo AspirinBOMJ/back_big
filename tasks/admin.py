@@ -8,9 +8,13 @@ class SubTaskInline(admin.TabularInline):
     model = SubTask
 
 
+class CommentInline(admin.TabularInline):
+    model = Comment
+
 class TaskUserAdmin(ModelAdmin):
-    inlines = [SubTaskInline]
+    inlines = [SubTaskInline, CommentInline]
 
 
 admin.site.register(Task, TaskUserAdmin)
 admin.site.register(SubTask)
+admin.site.register(Comment)

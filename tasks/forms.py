@@ -17,3 +17,10 @@ class SubTaskForm(forms.ModelForm):
     class Meta:
         model = SubTask
         fields = ['text',] 
+
+
+class CommentForm(forms.ModelForm):
+    text = forms.CharField(max_length=30, label='Create new comment', )
+    class Meta:
+        model = Comment
+        fields = ['text',] 

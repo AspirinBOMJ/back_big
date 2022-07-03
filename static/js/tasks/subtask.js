@@ -10,7 +10,7 @@ $(document).on('submit', '.subtask_form', function(e) {
         processData: false,
         success: function(response){
             if ("subtask_html" in response){
-                document.querySelector(".sub-" + response['task_slug']).innerHTML += '<li class="list-group-item subtask-' + response['pk'] + '">' + (response["subtask_html"]) + '</li>'
+                document.querySelector(".sub-" + response['task_slug']).innerHTML += '<li class="list-group-item subtask-' + response['pk'] + ' good-list">' + (response["subtask_html"]) + '</li>'
             }
             else if("form_errors" in response){
                 for (let key in response["form_errors"]) {

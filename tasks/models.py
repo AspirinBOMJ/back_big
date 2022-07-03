@@ -40,3 +40,9 @@ class SubTask(models.Model):
 
     def get_absolute_url(self):
         return reverse('task_detail', kwargs={"slug": self.task.slug})
+
+
+class Comment(models.Model):
+    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    text = models.TextField()
