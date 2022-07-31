@@ -44,12 +44,11 @@ class ActivateEmailSendView(LoginRequiredMixin, AuthFormsMixin, View):
     def get(self, request, *args, **kwargs):
         token = email_activation_token.make_token(request.user)
         uid64 = force_str(urlsafe_base64_encode(force_bytes(request.user.pk)))
-        url = 'https://tasks-project-485.herokuapp.com/' + reverse_lazy('activate_email', kwargs={'uidb64': uid64, 'token': token})
+        url = 'https://tasks-project-485.herokuapp.com' + reverse_lazy('activate_email', kwargs={'uidb64': uid64, 'token': token})
 
         send_mail('Email activation from "Tasks web site"', 
                   f'Hello {request.user.first_name}! Now you can activate your email, just follow the link: {url}', 
-                  'djangoemailsends@gmail.com', 
-                  [request.user.email,], 
+                  'djangoemailsends@gmail.com', [request.user.email,], 
                   fail_silently=False)
         context={'title': 'Email send'}
         context.update(self.get_simple_context())
@@ -114,7 +113,7 @@ class ResetPasswordSendView(AuthFormsMixin, View):
         user = get_user_model().objects.get(email = kwargs['email'])
         token = reset_password_activation_token.make_token(user)
         uid64 = force_str(urlsafe_base64_encode(force_bytes(user.pk)))
-        url = 'https://tasks-project-485.herokuapp.com/' + reverse_lazy('reset_pass', kwargs={'uidb64': uid64, 'token': token})
+        url = 'https://tasks-project-485.herokuapp.com' + reverse_lazy('reset_pass', kwargs={'uidb64': uid64, 'token': token})
 
         send_mail('Email activation from "Tasks web site"', 
                   f'Hello {user.first_name}! Now you can reset your password, just follow the link: {url}', 
